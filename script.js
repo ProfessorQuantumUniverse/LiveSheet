@@ -72,6 +72,7 @@ async function fetchDataAndUpdateChart(surveyConfig) {
         lastUpdatedSpan.textContent = new Date().toLocaleTimeString();
 
         // --- ENDE DER ÄNDERUNG ---
+    }
 }
 
 // Funktion zum Erstellen/Aktualisieren des Chart.js-Diagramms
