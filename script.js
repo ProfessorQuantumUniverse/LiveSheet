@@ -54,33 +54,24 @@ async function fetchDataAndUpdateChart(surveyConfig) {
             throw new Error(`Received invalid or mismatched data format for ${surveyId}.`);
         }
 
-        // Titel aktualisieren (optional, falls Daten leer sind)
-        if (titleElement) {
-           titleElement.textContent = titlePrefix + (data.labels.length > 0 ? "Ergebnisse" : "Noch keine Daten");
-        }
+        // --- BEGINN DER ÄNDERUNG ---
 
-        // Diagramm aktualisieren oder neu erstellen
+        // 1. Status: Geladen - Klassen zuerst aktualisieren!
+        containerElement.classList.remove('is-loading', 'has-error');
+            containerElement.classList.add('is-loaded');
+
+        // Optional: Titel jetzt aktualisieren
+        if (titleElement) {
+            titleElement.textContent = titlePrefix + (data.labels.length > 0 ? "Ergebnisse" : "Noch keine Daten");
+            }
+
+        // 2. Diagramm aktualisieren/erstellen, NACHDEM der Container sichtbar ist
         updateChart(surveyId, canvasId, data.labels, data.data);
 
-        // Status: Geladen
-        containerElement.classList.remove('is-loading', 'has-error');
-        containerElement.classList.add('is-loaded');
-        lastUpdatedSpan.textContent = new Date().toLocaleTimeString(); // Zeit global aktualisieren
+        // 3. Zeitstempel aktualisieren (kann hier oder am Ende stehen)
+        lastUpdatedSpan.textContent = new Date().toLocaleTimeString();
 
-    } catch (error) {
-        console.error(`Error fetching or processing data for ${surveyId}:`, error);
-        // Status: Fehler
-        containerElement.classList.remove('is-loading', 'is-loaded');
-        containerElement.classList.add('has-error');
-        errorElement.textContent = `Fehler (${surveyId}): ${error.message}`;
-        // errorElement.classList.remove('d-none'); // Wird durch has-error Klasse gesteuert
-         if (titleElement) titleElement.textContent = titlePrefix + "Fehler";
-         // Optional: Alte Chart-Instanz zerstören bei Fehler?
-         // if (chartInstances[surveyId]) {
-         //    chartInstances[surveyId].destroy();
-         //    delete chartInstances[surveyId];
-         // }
-    }
+        // --- ENDE DER ÄNDERUNG ---
 }
 
 // Funktion zum Erstellen/Aktualisieren des Chart.js-Diagramms
