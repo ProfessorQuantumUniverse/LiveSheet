@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Umfrage Ergebnisse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <header class="text-center mb-5">
+            <h1>Umfrage Ergebnisse</h1>
+            <p class="lead">Die Ergebnisse werden live aktualisiert.</p>
+             <div class="text-center text-muted small mt-2">
+                Letzte Aktualisierung: <span id="last-updated">Nie</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="row">
+                <!-- Diagramm für Umfrage 1 -->
+                <div class="col-md-6 mb-4">
+                    <div class="chart-card shadow-sm p-3 bg-white rounded">
+                        <h2 class="h5 text-center mb-3" id="chartTitle1">Umfrage 1: Ergebnisse</h2>
+                        <div class="chart-container" id="chartContainer1">
+                            <canvas id="resultsChart1"></canvas>
+                            <div id="loading1" class="loading-indicator text-center mt-3">
+                                <div class="spinner-border text-primary" role="status">
+                                  <span class="visually-hidden">Lade Daten...</span>
+                                </div>
+                                <p>Lade Daten für Umfrage 1...</p>
+                            </div>
+                            <div id="error1" class="error-message alert alert-danger d-none mt-3" role="alert">
+                                Fehler beim Laden von Umfrage 1.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diagramm für Umfrage 2 -->
+                <div class="col-md-6 mb-4">
+                     <div class="chart-card shadow-sm p-3 bg-white rounded">
+                        <h2 class="h5 text-center mb-3" id="chartTitle2">Umfrage 2: Ergebnisse</h2>
+                        <div class="chart-container" id="chartContainer2">
+                            <canvas id="resultsChart2"></canvas>
+                            <div id="loading2" class="loading-indicator text-center mt-3">
+                                 <div class="spinner-border text-success" role="status">
+                                  <span class="visually-hidden">Lade Daten...</span>
+                                </div>
+                                 <p>Lade Daten für Umfrage 2...</p>
+                            </div>
+                            <div id="error2" class="error-message alert alert-danger d-none mt-3" role="alert">
+                                 Fehler beim Laden von Umfrage 2.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Füge hier bei Bedarf weitere Spalten für mehr Diagramme ein -->
+
+            </div> <!-- Ende .row -->
+        </main>
+
+        <footer class="text-center mt-5 text-muted">
+            <p><small>Powered by Google Sheets & Chart.js</small></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

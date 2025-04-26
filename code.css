@@ -1,0 +1,50 @@
+body {
+    background-color: #f8f9fa;
+    font-family: sans-serif;
+}
+
+.chart-card {
+    /* Kann leer bleiben oder für zusätzliche Stile des Rahmens verwendet werden */
+}
+
+.chart-container {
+    position: relative;
+    min-height: 350px; /* Höhe etwas reduziert für Nebeneinander-Ansicht */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-container canvas {
+    display: block;
+    width: 100% !important;
+    height: auto !important;
+    max-height: 350px; /* Max Höhe begrenzen */
+}
+
+/* Ladeanzeige und Fehlermeldung initial anzeigen/verstecken */
+.loading-indicator {
+    display: block; /* Wird per JS ausgeblendet */
+}
+.error-message {
+    width: 80%;
+    display: none; /* Wird per JS eingeblendet */
+}
+
+/* Zustände per JS-Klassen steuern */
+.chart-container.is-loading canvas { display: none; }
+.chart-container.is-loading .error-message { display: none; }
+.chart-container.is-loading .loading-indicator { display: block; }
+
+.chart-container.has-error canvas { display: none; }
+.chart-container.has-error .loading-indicator { display: none; }
+.chart-container.has-error .error-message { display: block !important; } /* Wichtig wg. d-none */
+
+.chart-container.is-loaded .loading-indicator { display: none; }
+.chart-container.is-loaded .error-message { display: none; }
+.chart-container.is-loaded canvas { display: block; }
+
+
+header h1 {
+    color: #343a40;
+}
