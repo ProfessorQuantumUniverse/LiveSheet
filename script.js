@@ -1,6 +1,6 @@
 // --- KONFIGURATION ---
 // !! WICHTIG: Ersetze dies mit der URL deiner bereitgestellten Google Apps Script Web App !!
-const SCRIPT_URL = 'DEINE_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAuve4n3GLZm4id7GSaDn2AupWonTvKaHL-3bA3bb0JgB90CdVlVfl5Vu0kIVzXfa4/exec';
 
 // !! WICHTIG: Diese Bezeichner MÜSSEN mit den Schlüsseln in SURVEY_CONFIG im Apps Script übereinstimmen !!
 const SURVEYS_TO_LOAD = [
