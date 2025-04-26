@@ -79,7 +79,7 @@ async function fetchDataAndUpdateChart(surveyConfig) {
         // NEU: 3. Gesamtanzahl und Prozent berechnen und anzeigen
         const totalSubmits = data.data.reduce((sum, value) => sum + (Number(value) || 0), 0);
         const percentage = maxSubmits > 0 ? (totalSubmits / maxSubmits * 100) : 0;
-        statsElement.innerHTML = `Gesamt: <strong>${totalSubmits}</strong> / ${maxSubmits} <span class="text-secondary">(${percentage.toFixed(1)}%)</span>`; // Zeigt z.B. "Gesamt: 15 / 34 (44.1%)"
+        statsElement.innerHTML = `Es haben erst: <strong>${totalSubmits}</strong> von ${maxSubmits} geantwortet! <span class="text-secondary">( Das sind ${percentage.toFixed(1)}%)</span>`; // Zeigt z.B. "Gesamt: 15 / 34 (44.1%)"
 
         // 3. Diagramm aktualisieren/erstellen
         updateChart(surveyId, canvasId, data.labels, data.data);
