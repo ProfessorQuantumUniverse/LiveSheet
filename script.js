@@ -22,19 +22,25 @@ async function fetchDataAndUpdateChart(surveyConfig) {
     console.log(`Fetching data for survey: ${surveyId}`);
 
     const containerElement = document.getElementById(containerId);
-    const errorElement = document.getElementById(`error${containerId.match(/\d+/)[0]}`); // z.B. error1
+    // KORREKTUR: Fehler-Element-ID dynamisch und sicher holen
+    const errorElementId = `error${containerId.replace(/[^0-9]/g, '')}`; // Extrahiert die Zahl aus containerId (z.B. "1" aus "chartContainer1")
+    const errorElement = document.getElementById(errorElementId);
     const canvasElement = document.getElementById(canvasId);
     const titleElement = document.getElementById(titleId);
 
-    if (!containerElement || !errorElement || !canvasElement) {
-        console.error(`HTML elements not found for survey ${surveyId}. Check IDs.`);
-        return; // Abbruch, wenn Elemente fehlen
+    // Prüfen, ob alle Elemente gefunden wurden (wichtig!)
+    if (!containerElement || !errorElement || !canvasElement || !titleElement) {
+        console.error(`HTML elements not found for survey ${surveyId}. Check IDs: containerId=${containerId}, errorElementId=${errorElementId}, canvasId=${canvasId}, titleId=${titleId}`);
+        // Optional: Visuelles Feedback geben, dass Setup falsch ist
+        if (containerElement) containerElement.innerHTML = `<div class="alert alert-danger">Setup Error: Missing HTML elements for ${surveyId}.</div>`;
+        return; // Abbruch
     }
 
     // Status: Laden
     containerElement.classList.remove('is-loaded', 'has-error');
     containerElement.classList.add('is-loading');
     errorElement.classList.add('d-none'); // Sicherstellen, dass alter Fehler weg ist
+    errorElement.textContent = ''; // Text zurücksetzen
 
     try {
         // Korrekte URL mit Survey-Parameter erstellen
@@ -42,39 +48,63 @@ async function fetchDataAndUpdateChart(surveyConfig) {
         const response = await fetch(fetchUrl);
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status} for ${surveyId}`);
+            // Versuchen, mehr Details aus der Antwort zu bekommen, falls vorhanden
+            let responseText = await response.text(); // Antwort als Text lesen
+            try { responseText = JSON.parse(responseText).error || responseText; } catch (e) { /* bleibt Text */ }
+            throw new Error(`HTTP error! Status: ${response.status} for ${surveyId}. Response: ${responseText}`);
         }
+
         const data = await response.json();
         console.log(`Data received for ${surveyId}:`, data);
 
+        // Fehler vom Script prüfen
         if (data.error) {
             throw new Error(`Script error for ${surveyId}: ${data.error}`);
         }
-        if (!data.labels || !data.data || data.surveyId !== surveyId) {
+        // Datenformat prüfen
+        if (!data.labels || !Array.isArray(data.labels) || !data.data || !Array.isArray(data.data) || data.surveyId !== surveyId) {
+            console.error("Invalid data format received:", data); // Log das fehlerhafte Format
             throw new Error(`Received invalid or mismatched data format for ${surveyId}.`);
         }
 
-        // --- BEGINN DER ÄNDERUNG ---
-
-        // 1. Status: Geladen - Klassen zuerst aktualisieren!
+        // -------- Korrekte Position der Logik --------
+        // 1. Status: Geladen - Klassen aktualisieren!
         containerElement.classList.remove('is-loading', 'has-error');
-            containerElement.classList.add('is-loaded');
+        containerElement.classList.add('is-loaded');
 
-        // Optional: Titel jetzt aktualisieren
-        if (titleElement) {
-            titleElement.textContent = titlePrefix + (data.labels.length > 0 ? "Ergebnisse" : "Noch keine Daten");
-            }
+        // 2. Titel aktualisieren
+        titleElement.textContent = titlePrefix + (data.labels.length > 0 ? "Ergebnisse" : "Noch keine Daten");
 
-        // 2. Diagramm aktualisieren/erstellen, NACHDEM der Container sichtbar ist
+        // 3. Diagramm aktualisieren/erstellen
         updateChart(surveyId, canvasId, data.labels, data.data);
 
-        // 3. Zeitstempel aktualisieren (kann hier oder am Ende stehen)
+        // 4. Globalen Zeitstempel aktualisieren (nur einmal pro Durchlauf nötig, kann optimiert werden)
         lastUpdatedSpan.textContent = new Date().toLocaleTimeString();
+        // -------- Ende der Logik im try-Block --------
 
-        // --- ENDE DER ÄNDERUNG ---
+    } catch (error) { // <<<<<< DER WIEDERHERGESTELLTE CATCH-BLOCK
+        console.error(`Error fetching or processing data for ${surveyId}:`, error);
+        // Status: Fehler
+        containerElement.classList.remove('is-loading', 'is-loaded');
+        containerElement.classList.add('has-error');
+        // Detaillierte Fehlermeldung anzeigen
+        errorElement.textContent = `Fehler (${surveyId}): ${error.message}`;
+        errorElement.classList.remove('d-none'); // Fehlermeldung sichtbar machen
+        if (titleElement) titleElement.textContent = titlePrefix + "Fehler";
+
+        // Optional: Alte Chart-Instanz zerstören bei Fehler, um Grafikfehler zu vermeiden
+        if (chartInstances[surveyId]) {
+           try {
+             chartInstances[surveyId].destroy();
+             console.log(`Chart instance for ${surveyId} destroyed due to error.`);
+           } catch (destroyError) {
+             console.error(`Error destroying chart instance for ${surveyId}:`, destroyError);
+           }
+           delete chartInstances[surveyId];
+        }
     }
+    // Die Funktion endet hier korrekt
 }
-
 // Funktion zum Erstellen/Aktualisieren des Chart.js-Diagramms
 function updateChart(surveyId, canvasId, labels, data) {
     const canvasElement = document.getElementById(canvasId);
