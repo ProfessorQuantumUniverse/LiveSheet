@@ -4,8 +4,8 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAuve4n3GLZm4id7GSa
 
 // !! WICHTIG: Diese Bezeichner MÜSSEN mit den Schlüsseln in SURVEY_CONFIG im Apps Script übereinstimmen !!
 const SURVEYS_TO_LOAD = [
-    { id: "umfrage1", canvasId: "resultsChart1", containerId: "chartContainer1", titleId: "chartTitle1", titlePrefix: "Umfrage 1: " },
-    { id: "umfrage2", canvasId: "resultsChart2", containerId: "chartContainer2", titleId: "chartTitle2", titlePrefix: "Umfrage 2: " }
+    { id: "umfrage1", canvasId: "resultsChart1", containerId: "chartContainer1", titleId: "chartTitle1", titlePrefix: "Umfrage 1: ", statsId: "stats1", maxSubmits: 34 },
+    { id: "umfrage2", canvasId: "resultsChart2", containerId: "chartContainer2", titleId: "chartTitle2", titlePrefix: "Umfrage 2: ", statsId: "stats2", maxSubmits: 34  }
     // Füge hier weitere Objekte hinzu, wenn du mehr Umfragen in SURVEY_CONFIG definiert hast
     // { id: "feedback_runde_3", canvasId: "resultsChart3", containerId: "chartContainer3", titleId: "chartTitle3", titlePrefix: "Feedback Runde 3: " }
 ];
@@ -18,7 +18,7 @@ let chartInstances = {}; // Objekt zum Speichern der Chart.js Instanzen
 
 // Funktion zum Abrufen der Daten und Aktualisieren EINES Diagramms
 async function fetchDataAndUpdateChart(surveyConfig) {
-    const { id: surveyId, canvasId, containerId, titleId, titlePrefix } = surveyConfig;
+    const { id: surveyId, canvasId, containerId, titleId, statsId, titlePrefix, maxSubmits } = surveyConfig;
     console.log(`Fetching data for survey: ${surveyId}`);
 
     const containerElement = document.getElementById(containerId);
@@ -27,11 +27,11 @@ async function fetchDataAndUpdateChart(surveyConfig) {
     const errorElement = document.getElementById(errorElementId);
     const canvasElement = document.getElementById(canvasId);
     const titleElement = document.getElementById(titleId);
+    const statsElement = document.getElementById(statsId);
 
     // Prüfen, ob alle Elemente gefunden wurden (wichtig!)
-    if (!containerElement || !errorElement || !canvasElement || !titleElement) {
-        console.error(`HTML elements not found for survey ${surveyId}. Check IDs: containerId=${containerId}, errorElementId=${errorElementId}, canvasId=${canvasId}, titleId=${titleId}`);
-        // Optional: Visuelles Feedback geben, dass Setup falsch ist
+    if (!containerElement || !errorElement || !canvasElement || !titleElement || !statsElement) { // NEU: statsElement hinzugefügt
+        console.error(`HTML elements not found for survey ${surveyId}. Check IDs: containerId=${containerId}, errorElementId=${errorElementId}, canvasId=${canvasId}, titleId=${titleId}, statsId=${statsId}`); // NEU: statsId geloggt
         if (containerElement) containerElement.innerHTML = `<div class="alert alert-danger">Setup Error: Missing HTML elements for ${surveyId}.</div>`;
         return; // Abbruch
     }
@@ -41,6 +41,7 @@ async function fetchDataAndUpdateChart(surveyConfig) {
     containerElement.classList.add('is-loading');
     errorElement.classList.add('d-none'); // Sicherstellen, dass alter Fehler weg ist
     errorElement.textContent = ''; // Text zurücksetzen
+    statsElement.textContent = 'Gesamt: Lade...';
 
     try {
         // Korrekte URL mit Survey-Parameter erstellen
@@ -75,6 +76,11 @@ async function fetchDataAndUpdateChart(surveyConfig) {
         // 2. Titel aktualisieren
         titleElement.textContent = titlePrefix + (data.labels.length > 0 ? "Ergebnisse" : "Noch keine Daten");
 
+        // NEU: 3. Gesamtanzahl und Prozent berechnen und anzeigen
+        const totalSubmits = data.data.reduce((sum, value) => sum + (Number(value) || 0), 0);
+        const percentage = maxSubmits > 0 ? (totalSubmits / maxSubmits * 100) : 0;
+        statsElement.innerHTML = `Gesamt: <strong>${totalSubmits}</strong> / ${maxSubmits} <span class="text-secondary">(${percentage.toFixed(1)}%)</span>`; // Zeigt z.B. "Gesamt: 15 / 34 (44.1%)"
+
         // 3. Diagramm aktualisieren/erstellen
         updateChart(surveyId, canvasId, data.labels, data.data);
 
@@ -90,6 +96,8 @@ async function fetchDataAndUpdateChart(surveyConfig) {
         // Detaillierte Fehlermeldung anzeigen
         errorElement.textContent = `Fehler (${surveyId}): ${error.message}`;
         errorElement.classList.remove('d-none'); // Fehlermeldung sichtbar machen
+        statsElement.textContent = 'Gesamt: Fehler';
+        
         if (titleElement) titleElement.textContent = titlePrefix + "Fehler";
 
         // Optional: Alte Chart-Instanz zerstören bei Fehler, um Grafikfehler zu vermeiden
