@@ -5,7 +5,8 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAuve4n3GLZm4id7GSa
 // !! WICHTIG: Diese Bezeichner MÜSSEN mit den Schlüsseln in SURVEY_CONFIG im Apps Script übereinstimmen !!
 const SURVEYS_TO_LOAD = [
     { id: "umfrage1", canvasId: "resultsChart1", containerId: "chartContainer1", titleId: "chartTitle1", titlePrefix: "Umfrage 1: ", statsId: "stats1", maxSubmits: 34 },
-    { id: "umfrage2", canvasId: "resultsChart2", containerId: "chartContainer2", titleId: "chartTitle2", titlePrefix: "Umfrage 2: ", statsId: "stats2", maxSubmits: 34  }
+    { id: "umfrage2", canvasId: "resultsChart2", containerId: "chartContainer2", titleId: "chartTitle2", titlePrefix: "Umfrage 2: ", statsId: "stats2", maxSubmits: 34  },
+    { id: "umfrage3", canvasId: "resultsChart3", containerId: "chartContainer3", titleId: "chartTitle3", titlePrefix: "Umfrage 3: ", statsId: "stats3", maxSubmits: 34 },
     // Füge hier weitere Objekte hinzu, wenn du mehr Umfragen in SURVEY_CONFIG definiert hast
     // { id: "feedback_runde_3", canvasId: "resultsChart3", containerId: "chartContainer3", titleId: "chartTitle3", titlePrefix: "Feedback Runde 3: " }
 ];
