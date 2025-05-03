@@ -59,25 +59,29 @@
                         </div>
                     </div>
                 </div>
-                 <!-- Füge hier bei Bedarf weitere Spalten für mehr Diagramme ein -->
-                <div class="col-md-6 mb-4">
-                     <div class="chart-card shadow-sm p-3 bg-white rounded">
-                        <h2 class="h5 text-center mb-3" id="chartTitle2">Bunter Abend</h2>
-                         <p class="text-center text-muted small mb-2" id="stats3">
-                        <div class="chart-container" id="chartContainer2">
-                            <canvas id="resultsChart3"></canvas>
-                            <div id="loading3" class="loading-indicator text-center mt-3">
-                                 <div class="spinner-border text-success" role="status">
-                                  <span class="visually-hidden">Lade Daten...</span>
-                                </div>
-                                 <p>Lade Daten für Umfrage 2...</p>
-                            </div>
-                            <div id="error2" class="error-message alert alert-danger d-none mt-3" role="alert">
-                                 Fehler beim Laden von Umfrage 2.
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- NEU EINGEFÜGTER UND ANGEPASSTER BLOCK FÜR UMFRAGE 3 -->
+                 <div class="col-md-6 mb-4"> <!-- Evtl. Klasse anpassen, wenn mehr als 2 pro Reihe, z.B. col-md-4 -->
+                      <div class="chart-card shadow-sm p-3 bg-white rounded">
+                         <h2 class="h5 text-center mb-1" id="chartTitle3">Umfrage 3: Ergebnisse</h2> <!-- ID geändert -->
+                         <p class="text-center text-muted small mb-2" id="stats3"> <!-- ID geändert -->
+                             Gesamt: Lade...
+                        </p>
+                         <div class="chart-container" id="chartContainer3"> <!-- ID geändert -->
+                             <canvas id="resultsChart3"></canvas> <!-- ID geändert -->
+                             <div id="loading3" class="loading-indicator text-center mt-3"> <!-- ID geändert -->
+                                  <!-- Spinner vielleicht andere Farbe? z.B. text-warning -->
+                                <div class="spinner-border text-warning" role="status">
+                                   <span class="visually-hidden">Lade Daten...</span>
+                                 </div>
+                                  <p>Lade Daten für Umfrage 3...</p> <!-- Text geändert -->
+                             </div>
+                             <div id="error3" class="error-message alert alert-danger d-none mt-3" role="alert"> <!-- ID geändert -->
+                                  Fehler beim Laden von Umfrage 3. <!-- Text geändert -->
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <!-- ENDE DES NEUEN BLOCKS -->
 
             </div> <!-- Ende .row -->
         </main>
